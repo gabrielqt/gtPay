@@ -1,10 +1,11 @@
-package com.gabrielqt.gtpay.security.filter;
+package com.gabrielqt.gtpay.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,13 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // chave secreta usada pra assinar o token — em produção vai no application.properties
-    private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+    // chave secreta usada pra assinar o token — em produção vai no application.propertie
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
     // 24 horas em milissegundos
-    private static final long EXPIRATION = 86400000;
+    @Value("${jwt.expiration}")
+    private long EXPIRATION;
 
     // gera o token com o email do usuário como subject
     public String generateToken(UserDetails userDetails) {

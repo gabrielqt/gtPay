@@ -3,6 +3,7 @@ services:
   app:
     build: .
     container_name: gtpay-application
+    restart: always
     ports:
       - "8080:8080"
     depends_on:
@@ -17,11 +18,15 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBIT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBIT_PASS}
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+
 
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
+    restart: always
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: ${DB_PASS}
@@ -32,10 +37,14 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
+    restart: always
     container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}
 
 volumes:
   sql_data:
