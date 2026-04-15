@@ -20,9 +20,7 @@ public class UserMapper {
                 .password(passwordEncoder.encode(registerRequest.password()))
                 .cpf(registerRequest.cpf())
                 .role(registerRequest.role())
-                .balance(
-                        registerRequest.balance() == null ? BigDecimal.ZERO : registerRequest.balance()
-                        )
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 }

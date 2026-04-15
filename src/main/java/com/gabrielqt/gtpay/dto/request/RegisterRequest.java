@@ -13,7 +13,6 @@ public record RegisterRequest(
     @Email String email,
     @Password() String password,
     @CPF String cpf,
-    Role role,
-    @NotNull BigDecimal balance
+    Role role
 ) {
 }

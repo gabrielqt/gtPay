@@ -5,6 +5,7 @@ import com.gabrielqt.gtpay.dto.response.TokenResponse;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.entity.enums.Role;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
+import com.gabrielqt.gtpay.mapper.UserMapper;
 import com.gabrielqt.gtpay.repository.UserRepository;
 import com.gabrielqt.gtpay.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager; // gerencia o processo de autenticação
+    private final UserMapper userMapper;
 
     public TokenResponse login(LoginRequest request) {
 
@@ -47,8 +49,7 @@ public class AuthService {
     }
 
     public void register(RegisterRequest request) {
-        // CRIAR MAPPER AQUI PRA USUARIO E USAR CPF AO INVES DE EMAIL
 
-        userRepository.save(user);
+        userRepository.save(userMapper.toEntity(request));
     }
 }
