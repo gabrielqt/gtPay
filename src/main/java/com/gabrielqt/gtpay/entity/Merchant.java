@@ -25,5 +25,9 @@ public class Merchant {
     @OneToMany(mappedBy = "merchant")
     private List<MerchantApiKey> apiKeys;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
 }

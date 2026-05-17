@@ -36,6 +36,7 @@ public class User implements UserDetails {
     private String email;
     @Password
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 
@@ -46,7 +47,7 @@ public class User implements UserDetails {
         // "ROLE_" é prefixo obrigatório que o Spring espera
     }
     @Override
-    public @Nullable String getPassword() {
+    public String getPassword() {
         return this.password;
     }
 

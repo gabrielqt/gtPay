@@ -18,9 +18,7 @@ public class UserMapper {
                 .name(registerRequest.name())
                 .email(registerRequest.email())
                 .password(passwordEncoder.encode(registerRequest.password()))
-                .cpf(registerRequest.cpf())
                 .role(registerRequest.role())
-                .balance(BigDecimal.ZERO)
                 .build();
     }
 }

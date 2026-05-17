@@ -9,12 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "webhook_description")
+@Table(name = "webhook_subscription")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WebhookDescription {
+public class WebhookSubscription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class WebhookDescription {
     private String secret; // to sign the payload with HMAC
 
     @Enumerated(EnumType.STRING)
-    private EventType event;
+    private EventType event; // the event that this url listens to
 
     public String getUrl(){
         return merchant.getBaseUrl() + "/" + path;
