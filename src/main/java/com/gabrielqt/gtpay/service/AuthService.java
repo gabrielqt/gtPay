@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -24,6 +25,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager; // gerencia o processo de autenticação
     private final UserMapper userMapper;
+    private final MerchantService merchantService;
 
     public TokenResponse login(LoginRequest request) {
 
@@ -48,8 +50,12 @@ public class AuthService {
         return new TokenResponse(token);
     }
 
+    @Transactional
     public void register(RegisterRequest request) {
+        User user = userRepository.save(userMapper.toEntity(request));
 
-        userRepository.save(userMapper.toEntity(request));
+        if (Role.MERCHANT == request.role()) {
+            merchantService.createForUser(user);
+        }
     }
 }
