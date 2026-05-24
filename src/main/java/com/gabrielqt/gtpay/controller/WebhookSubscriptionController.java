@@ -18,7 +18,7 @@ public class WebhookSubscriptionController {
 
     private final WebhookSubscriptionService webhookSubscriptionService;
 
-    @PostMapping("/create-webhook-subscription/")
+    @PostMapping("/create-webhook-subscription")
     public ResponseEntity<WebhookSubscriptionResponse> createWebhookSubscription(@RequestBody @Valid WebhookSubscriptionRequest request,
                                                                                  Authentication authentication) {
         User user = (User) authentication.getPrincipal();
