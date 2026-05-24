@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 public record RegisterRequest(
     @NotNull String name,
     @Email String email,
-    @Password() String password,
-    @CPF String cpf,
-    Role role
+    @Password() String password
 ) {
 }

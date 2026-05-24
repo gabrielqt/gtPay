@@ -1,5 +1,6 @@
 package com.gabrielqt.gtpay.entity;
 
+import com.gabrielqt.gtpay.validators.interfaces.BaseUrl;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,11 +20,9 @@ public class Merchant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "base_url", unique = true, nullable = false)  //ex: https://api.com
+    @BaseUrl
+    @Column(name = "base_url", unique = true, nullable = false)  //ex: https://api.com.br
     private String baseUrl;
-
-    @OneToMany(mappedBy = "merchant")
-    private List<MerchantApiKey> apiKeys;
 
     @OneToOne
     @JoinColumn(name = "user_id")

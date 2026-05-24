@@ -2,6 +2,7 @@ package com.gabrielqt.gtpay.mapper;
 
 import com.gabrielqt.gtpay.dto.request.RegisterRequest;
 import com.gabrielqt.gtpay.entity.User;
+import com.gabrielqt.gtpay.entity.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class UserMapper {
                 .name(registerRequest.name())
                 .email(registerRequest.email())
                 .password(passwordEncoder.encode(registerRequest.password()))
-                .role(registerRequest.role())
+                .role(Role.MERCHANT)
                 .build();
     }
 }

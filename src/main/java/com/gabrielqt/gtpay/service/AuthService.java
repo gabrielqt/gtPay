@@ -53,8 +53,7 @@ public class AuthService {
     @Transactional
     public void register(RegisterRequest request) {
         User user = userRepository.save(userMapper.toEntity(request));
-
-        if (Role.MERCHANT == request.role()) {
+        if (Role.MERCHANT == user.getRole()) {
             merchantService.createForUser(user);
         }
     }

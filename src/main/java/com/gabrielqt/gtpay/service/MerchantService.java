@@ -29,11 +29,18 @@ public class MerchantService{
 
     @Transactional
     public MerchantResponse updateBaseUrl(String baseUrl, Long merchantId){
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new  ObjectNotFoundException("Merchant not Found"));
-
+        Merchant merchant = this.findById(merchantId);
         merchant.setBaseUrl(baseUrl); // dirty checking, its not necessary call .save()
-
         return merchantMapper.toMerchantResponse(merchant);
+    }
+
+    public Merchant findById(Long merchantId){
+        return merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new  ObjectNotFoundException("Merchant not Found"));
+    }
+
+    public Merchant findByUser(User user){
+        return merchantRepository.findByUser(user)
+                .orElseThrow(() -> new  ObjectNotFoundException("Merchant not Found"));
     }
 }

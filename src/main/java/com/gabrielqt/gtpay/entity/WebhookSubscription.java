@@ -30,8 +30,9 @@ public class WebhookSubscription {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
-    @NotEmpty
-    private String secret; // to sign the payload with HMAC
+    @Column(name = "secret_encrypted", nullable = false)
+    private String secretEncrypted; // to sign the payload with HMAC
+
 
     @Enumerated(EnumType.STRING)
     private EventType event; // the event that this url listens to
@@ -40,3 +41,5 @@ public class WebhookSubscription {
         return merchant.getBaseUrl() + "/" + path;
     }
 }
+
+
