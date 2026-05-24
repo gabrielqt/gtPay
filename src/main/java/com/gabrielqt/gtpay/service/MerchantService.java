@@ -21,7 +21,6 @@ public class MerchantService{
 
     public void createForUser(User user){
         Merchant merchant = Merchant.builder()
-                .baseUrl("")
                 .user(user)
                 .build();
         merchantRepository.save(merchant);

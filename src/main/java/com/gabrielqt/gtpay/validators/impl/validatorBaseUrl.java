@@ -11,8 +11,9 @@ public class validatorBaseUrl implements ConstraintValidator<BaseUrl, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+
         if (value == null || value.isBlank()) {
-            return false;
+            return true; // null/vazio é permitido — merchant configura depois
         }
 
         if (value.endsWith("/")){

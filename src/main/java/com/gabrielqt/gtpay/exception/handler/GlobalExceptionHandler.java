@@ -71,6 +71,7 @@ public class GlobalExceptionHandler {
     // qualquer outro erro inesperado
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception e) {
+        System.out.println("Unexpected error: {}" + e.getMessage() + e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(500, "Internal server error", LocalDateTime.now()));
     }
