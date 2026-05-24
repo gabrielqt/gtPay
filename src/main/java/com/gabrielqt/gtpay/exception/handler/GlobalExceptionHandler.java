@@ -1,6 +1,8 @@
 package com.gabrielqt.gtpay.exception.handler;
 
 import com.gabrielqt.gtpay.dto.response.ErrorResponse;
+import com.gabrielqt.gtpay.exception.MerchantAndPathAlreadyExists;
+import com.gabrielqt.gtpay.exception.MerchantWithoutBaseUrlException;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +70,21 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(400, e.getMessage(), LocalDateTime.now()));
     }
 
+    @ExceptionHandler(MerchantAndPathAlreadyExists.class)
+    public ResponseEntity<ErrorResponse> handleMerchantAndPathAlreadyExists(
+            MerchantAndPathAlreadyExists e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(409,e.getMessage(), LocalDateTime.now()));
+    }
+
+
+    @ExceptionHandler(MerchantWithoutBaseUrlException.class)
+    public ResponseEntity<ErrorResponse> handleMerchantWithoutBaseUrlException(
+            MerchantWithoutBaseUrlException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(400,e.getMessage(), LocalDateTime.now()));
+    }
+
     // qualquer outro erro inesperado
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception e) {
@@ -75,5 +92,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(500, "Internal server error", LocalDateTime.now()));
     }
-
 }

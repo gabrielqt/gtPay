@@ -24,7 +24,7 @@ public class WebhookSubscription {
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String path; // ex: store/webhook/paid
 
     @Column(nullable = false, name = "is_active")
