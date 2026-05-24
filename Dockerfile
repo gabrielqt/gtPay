@@ -10,6 +10,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 ENV JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
 EXPOSE 5005
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
