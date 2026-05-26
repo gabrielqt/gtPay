@@ -26,7 +26,7 @@ public class WebhookSubscriptionService {
 
         Merchant merchant = merchantService.findByUser(user);
         if (existsByMerchantIdAndPath(merchant.getId(), request.path())) throw new MerchantAndPathAlreadyExists(request.path(), merchant.getId());
-        if (merchant.getBaseUrl() == null || merchant.getBaseUrl().isBlank()) throw new MerchantWithoutBaseUrlException(merchant.getId());
+        if (merchant.getBaseUrl() == null || merchant.getBaseUrl().isBlank()) throw new MerchantWithoutBaseUrlException();
         String decryptSecret = secretService.generateSecret();
         String secretEncrypted = secretService.encryptSecret(decryptSecret);
         WebhookSubscription webhookSubscription = webhookSubscriptionMapper.toEntity(request, merchant, secretEncrypted);

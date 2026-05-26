@@ -1,6 +1,8 @@
 package com.gabrielqt.gtpay.security;
 
+import com.gabrielqt.gtpay.security.filter.ApiKeyFilter;
 import com.gabrielqt.gtpay.security.filter.JwtFilter;
+import com.gabrielqt.gtpay.service.ApiKeyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final ApiKeyFilter apiKeyFilter;
     private final UserDetailsService userDetailsService;
 
     @Bean
@@ -35,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(apiKeyFilter, JwtFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

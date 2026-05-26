@@ -1,9 +1,9 @@
 package com.gabrielqt.gtpay.exception;
 
 public class MerchantWithoutBaseUrlException extends BusinessException {
-  public MerchantWithoutBaseUrlException(Long merchantId) {
+  public MerchantWithoutBaseUrlException() {
     super(
-            "The merchant with id " + merchantId + " must have a base URL configured."
+            "The merchant must have a base URL configured."
     );
   }
 }

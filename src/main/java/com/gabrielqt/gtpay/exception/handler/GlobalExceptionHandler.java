@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MerchantWithoutBaseUrlException.class)
     public ResponseEntity<ErrorResponse> handleMerchantWithoutBaseUrlException(
             MerchantWithoutBaseUrlException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(400,e.getMessage(), LocalDateTime.now()));
     }
 
