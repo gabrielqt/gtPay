@@ -4,6 +4,7 @@ import com.gabrielqt.gtpay.dto.request.RegisterRequest;
 import com.gabrielqt.gtpay.dto.response.TokenResponse;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.entity.enums.Role;
+import com.gabrielqt.gtpay.exception.BusinessException;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
 import com.gabrielqt.gtpay.mapper.UserMapper;
 import com.gabrielqt.gtpay.repository.UserRepository;
@@ -52,6 +53,9 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new BusinessException("E-mail já cadastrado");
+        }
         User user = userRepository.save(userMapper.toEntity(request));
         if (Role.MERCHANT == user.getRole()) {
             merchantService.createForUser(user);

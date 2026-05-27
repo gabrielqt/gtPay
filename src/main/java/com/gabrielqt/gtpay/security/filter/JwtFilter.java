@@ -57,6 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+
         // remove o "Bearer " e fica só com o token
         String token = authHeader.substring(7);
 

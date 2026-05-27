@@ -1,9 +1,8 @@
-package com.gabrielqt.gtpay.controller;
+package com.gabrielqt.gtpay.controller.webhook;
 
 
 import com.gabrielqt.gtpay.dto.request.ChargeRequest;
 import com.gabrielqt.gtpay.dto.response.ChargeResponse;
-import com.gabrielqt.gtpay.repository.ChargeRepository;
 import com.gabrielqt.gtpay.service.ChargeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

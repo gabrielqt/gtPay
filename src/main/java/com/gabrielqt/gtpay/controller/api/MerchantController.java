@@ -1,16 +1,13 @@
-package com.gabrielqt.gtpay.controller;
+package com.gabrielqt.gtpay.controller.api;
 
 import com.gabrielqt.gtpay.dto.request.BaseUrlRequest;
 import com.gabrielqt.gtpay.dto.response.BaseUrlResponse;
-import com.gabrielqt.gtpay.dto.response.MerchantResponse;
 import com.gabrielqt.gtpay.entity.User;
-import com.gabrielqt.gtpay.mapper.MerchantMapper;
 import com.gabrielqt.gtpay.service.MerchantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 

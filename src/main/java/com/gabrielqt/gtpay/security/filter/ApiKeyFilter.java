@@ -24,15 +24,15 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (!path.startsWith("/api/v1/")) {
+        if (!path.startsWith("/webhook/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String apiKey = request.getHeader("X-Api-Key");
         if (apiKey == null || apiKey.isBlank()) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Missing API Key\"}");
             return;
         }
         Merchant merchant = apiKeyService.findMerchantByApiKey(apiKey);

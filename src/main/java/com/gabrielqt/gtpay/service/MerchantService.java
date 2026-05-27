@@ -2,7 +2,6 @@ package com.gabrielqt.gtpay.service;
 
 
 import com.gabrielqt.gtpay.dto.response.BaseUrlResponse;
-import com.gabrielqt.gtpay.dto.response.MerchantResponse;
 import com.gabrielqt.gtpay.entity.Merchant;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
@@ -11,7 +10,6 @@ import com.gabrielqt.gtpay.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.core.ObjectReadContext;
 
 
 @Service

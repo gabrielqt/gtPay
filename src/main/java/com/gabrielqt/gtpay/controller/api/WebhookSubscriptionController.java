@@ -1,4 +1,4 @@
-package com.gabrielqt.gtpay.controller;
+package com.gabrielqt.gtpay.controller.api;
 
 
 import com.gabrielqt.gtpay.dto.request.WebhookSubscriptionRequest;
