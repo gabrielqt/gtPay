@@ -4,7 +4,7 @@ import com.gabrielqt.gtpay.dto.request.RegisterRequest;
 import com.gabrielqt.gtpay.dto.response.TokenResponse;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.entity.enums.Role;
-import com.gabrielqt.gtpay.exception.BusinessException;
+import com.gabrielqt.gtpay.exception.EmailAlreadyRegisteredException;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
 import com.gabrielqt.gtpay.mapper.UserMapper;
 import com.gabrielqt.gtpay.repository.UserRepository;
@@ -12,11 +12,8 @@ import com.gabrielqt.gtpay.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +51,7 @@ public class AuthService {
     @Transactional
     public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new BusinessException("E-mail já cadastrado");
+            throw new EmailAlreadyRegisteredException(request.email());
         }
         User user = userRepository.save(userMapper.toEntity(request));
         if (Role.MERCHANT == user.getRole()) {

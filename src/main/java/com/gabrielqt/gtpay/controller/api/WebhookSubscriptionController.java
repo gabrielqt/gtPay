@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/webhooksubscription")
+@RequestMapping("/api/v1/webhooksubscription")
 @RequiredArgsConstructor
 public class WebhookSubscriptionController {
 

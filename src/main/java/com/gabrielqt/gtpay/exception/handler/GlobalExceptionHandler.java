@@ -1,6 +1,7 @@
 package com.gabrielqt.gtpay.exception.handler;
 
 import com.gabrielqt.gtpay.dto.response.ErrorResponse;
+import com.gabrielqt.gtpay.exception.EmailAlreadyRegisteredException;
 import com.gabrielqt.gtpay.exception.MerchantAndPathAlreadyExists;
 import com.gabrielqt.gtpay.exception.MerchantWithoutBaseUrlException;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
@@ -12,7 +13,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
@@ -81,6 +81,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MerchantWithoutBaseUrlException.class)
     public ResponseEntity<ErrorResponse> handleMerchantWithoutBaseUrlException(
             MerchantWithoutBaseUrlException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(400,e.getMessage(), LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(EmailAlreadyRegisteredException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyRegistered(
+            EmailAlreadyRegisteredException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(400,e.getMessage(), LocalDateTime.now()));
     }

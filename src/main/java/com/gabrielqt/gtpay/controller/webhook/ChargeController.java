@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/charge")
+@RequestMapping("/webhook/charge")
 @RequiredArgsConstructor
 public class ChargeController {
 
     private final ChargeService chargeService;
 
-    @PostMapping("create-chage/")
-    public ResponseEntity<ChargeResponse> createCharge(@RequestBody ChargeRequest chargeRequest)
+    @PostMapping("new-charge/")
+    public ResponseEntity<ChargeResponse> newCharge(@RequestBody ChargeRequest chargeRequest)
     {
         return ResponseEntity.ok().body(chargeService.createCharge(chargeRequest));
     }

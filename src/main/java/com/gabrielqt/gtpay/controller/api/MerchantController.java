@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/merchant")
+@RequestMapping("/api/v1/merchant")
 @RequiredArgsConstructor
 public class MerchantController {
 
