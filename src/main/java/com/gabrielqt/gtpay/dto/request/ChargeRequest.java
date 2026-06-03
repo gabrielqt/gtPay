@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record ChargeRequest(
-        @Nullable Status status,
         @NotNull@Min(0)BigDecimal amount,
         Long externalId
 ) {

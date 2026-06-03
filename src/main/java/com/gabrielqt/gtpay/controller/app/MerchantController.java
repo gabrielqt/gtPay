@@ -1,4 +1,4 @@
-package com.gabrielqt.gtpay.controller.api;
+package com.gabrielqt.gtpay.controller.app;
 
 import com.gabrielqt.gtpay.dto.request.BaseUrlRequest;
 import com.gabrielqt.gtpay.dto.response.BaseUrlResponse;
@@ -6,13 +6,14 @@ import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.service.MerchantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/v1/merchant")
+@RequestMapping("/app/merchant")
 @RequiredArgsConstructor
 public class MerchantController {
 
@@ -25,7 +26,8 @@ public class MerchantController {
     ) {
 
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(merchantService.updateBaseUrl(requestBaseUrl.baseUrl(), user));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(merchantService.updateBaseUrl(requestBaseUrl.baseUrl(), user));
 
     }
 }
