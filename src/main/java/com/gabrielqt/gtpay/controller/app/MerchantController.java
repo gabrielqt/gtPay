@@ -26,8 +26,7 @@ public class MerchantController {
     ) {
 
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(merchantService.updateBaseUrl(requestBaseUrl.baseUrl(), user));
+        return ResponseEntity.ok(merchantService.updateBaseUrl(requestBaseUrl.baseUrl(), user));
 
     }
 }

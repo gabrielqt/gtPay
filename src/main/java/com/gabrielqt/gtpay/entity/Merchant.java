@@ -21,7 +21,7 @@ public class Merchant {
     private Long id;
 
     @BaseUrl
-    @Column(name = "base_url", unique = true, nullable = false)  //ex: https://api.com.br
+    @Column(name = "base_url", unique = true)  //ex: https://api.com.br
     private String baseUrl;
 
     @OneToOne

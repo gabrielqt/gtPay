@@ -38,7 +38,7 @@ public class ApiKeyService {
         return new ApiKeyResponse(rawKey);
     }
 
-    public String hashKey(String rawKey) {
+    private String hashKey(String rawKey) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = md.digest(rawKey.getBytes(StandardCharsets.UTF_8));
