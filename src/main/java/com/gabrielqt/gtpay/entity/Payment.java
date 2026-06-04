@@ -25,7 +25,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Min(0)
+    @Min(value = 0, message = "Amount must be greater than or equal to zero")
     @NotNull
     private BigDecimal amount;
 

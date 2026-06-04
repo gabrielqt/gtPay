@@ -2,6 +2,8 @@ package com.gabrielqt.gtpay.exception.handler;
 
 import com.gabrielqt.gtpay.dto.response.ErrorResponse;
 import com.gabrielqt.gtpay.exception.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,6 +15,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -93,6 +100,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(400,e.getMessage(), LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        Map<String, List<String>> errors = e.getConstraintViolations()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        v -> v.getPropertyPath().toString(),
+                        Collectors.mapping(
+                                ConstraintViolation::getMessage,
+                                Collectors.toList()
+                        )
+                ));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(400, errors.toString(), LocalDateTime.now()));
     }
 
     // qualquer outro erro inesperado

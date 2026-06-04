@@ -27,7 +27,7 @@ public class Charge {
     private Status status; // quero setar default para pending
 
     @NotNull
-    @Min(0)
+    @Min(value = 0, message = "Amount must be greater than or equal to zero")
     private BigDecimal amount;
 
     @OneToOne
