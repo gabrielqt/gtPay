@@ -14,7 +14,7 @@ public class MerchantMapper {
         return new MerchantResponse(
                 merchant.getId(),
                 merchant.getBaseUrl(),
-                merchant.getUser()
+                merchant.getUser().getEmail()
                 );
     }
 }

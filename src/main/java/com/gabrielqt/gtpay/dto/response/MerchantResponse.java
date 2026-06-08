@@ -8,6 +8,6 @@ import java.util.List;
 public record MerchantResponse (
         Long id,
         String baseUrl,
-        User user
+        String user
 ){
 }

@@ -32,4 +32,15 @@ public class WebhookSubscriptionMapper {
                 webhookSubscription.isActive()
         );
     }
+
+    public WebhookSubscriptionResponse toResponse(WebhookSubscription webhookSubscription
+                                                 ) {
+        return new WebhookSubscriptionResponse(
+                webhookSubscription.getMerchant().getId(),
+                webhookSubscription.getPath(),
+                webhookSubscription.getEvent(),
+                webhookSubscription.getSecretEncrypted(),
+                webhookSubscription.isActive()
+        );
+    }
 }

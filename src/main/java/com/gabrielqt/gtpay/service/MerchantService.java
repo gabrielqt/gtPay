@@ -2,12 +2,15 @@ package com.gabrielqt.gtpay.service;
 
 
 import com.gabrielqt.gtpay.dto.response.BaseUrlResponse;
+import com.gabrielqt.gtpay.dto.response.MerchantResponse;
 import com.gabrielqt.gtpay.entity.Merchant;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
 import com.gabrielqt.gtpay.mapper.MerchantMapper;
 import com.gabrielqt.gtpay.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +36,19 @@ public class MerchantService{
         return new BaseUrlResponse(merchant.getBaseUrl());
     }
 
-    public Merchant findById(Long merchantId){
-        return merchantRepository.findById(merchantId)
+    public MerchantResponse findById(Long merchantId){
+        Merchant merchant =  merchantRepository.findById(merchantId)
                 .orElseThrow(() -> new  ObjectNotFoundException("Merchant not Found"));
+        return merchantMapper.toMerchantResponse(merchant);
     }
 
     public Merchant findByUser(User user){
         return merchantRepository.findByUser(user)
                 .orElseThrow(() -> new  ObjectNotFoundException("Merchant not Found"));
     }
+
+    public Page<MerchantResponse> findAll(Pageable pageable){
+        return merchantRepository.findAll(pageable).map(merchantMapper::toMerchantResponse);
+    }
+
 }

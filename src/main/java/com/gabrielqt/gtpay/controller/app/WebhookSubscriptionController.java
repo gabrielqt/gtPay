@@ -3,10 +3,13 @@ package com.gabrielqt.gtpay.controller.app;
 
 import com.gabrielqt.gtpay.dto.request.WebhookSubscriptionRequest;
 import com.gabrielqt.gtpay.dto.response.WebhookSubscriptionResponse;
+import com.gabrielqt.gtpay.entity.Merchant;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.service.WebhookSubscriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,5 +29,13 @@ public class WebhookSubscriptionController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(webhookSubscriptionService.createWebhookSubscription(request, user));
 
+    }
+
+    public Page<WebhookSubscriptionResponse> findAll(
+            Authentication authentication,
+            Pageable pageable
+    ) {
+        Merchant merchant = (Merchant) authentication.getPrincipal();
+        return webhookSubscriptionService.findAll(pageable, merchant);
     }
 }
