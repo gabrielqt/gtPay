@@ -8,6 +8,7 @@ import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.entity.WebhookSubscription;
 import com.gabrielqt.gtpay.exception.MerchantAndPathAlreadyExists;
 import com.gabrielqt.gtpay.exception.MerchantWithoutBaseUrlException;
+import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
 import com.gabrielqt.gtpay.mapper.WebhookSubscriptionMapper;
 import com.gabrielqt.gtpay.repository.WebhookSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +38,24 @@ public class WebhookSubscriptionService {
         return webhookSubscriptionMapper.toResponse(webhookSubscription, decryptSecret);
     }
 
-    private boolean existsByMerchantIdAndPath(Long merchantId, String path) {
-        return webhookSubscriptionRepository.existsByMerchantIdAndPath(merchantId, path);
+
+    public void deleteWebhookSubscription(Long id) {
+        WebhookSubscription webhookSubscription = findById(id);
+        webhookSubscriptionRepository.delete(webhookSubscription);
     }
 
     public Page<WebhookSubscriptionResponse> findAll(Pageable pageable, User user) {
         return webhookSubscriptionRepository.findByMerchant(pageable, merchantService.findByUser(user))
                 .map(webhookSubscriptionMapper::toResponse);
+    }
+
+    private boolean existsByMerchantIdAndPath(Long merchantId, String path) {
+        return webhookSubscriptionRepository.existsByMerchantIdAndPath(merchantId, path);
+    }
+
+    public WebhookSubscription findById(Long id) {
+        return webhookSubscriptionRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Webhook subscription with id " + id + " not found"));
     }
 }
 

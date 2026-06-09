@@ -36,7 +36,7 @@ public class WebhookSubscriptionMapper {
     public WebhookSubscriptionResponse toResponse(WebhookSubscription webhookSubscription
                                                  ) {
         return new WebhookSubscriptionResponse(
-                webhookSubscription.getMerchant().getId(),
+                webhookSubscription.getId(),
                 webhookSubscription.getPath(),
                 webhookSubscription.getEvent(),
                 webhookSubscription.getSecretEncrypted(),

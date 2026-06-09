@@ -39,4 +39,10 @@ public class WebhookSubscriptionController {
         User user = (User) authentication.getPrincipal();
         return webhookSubscriptionService.findAll(pageable, user);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWebhookSubscription(@PathVariable Long id) {
+        webhookSubscriptionService.deleteWebhookSubscription(id);
+        return ResponseEntity.noContent().build();
+    }
 }
