@@ -10,7 +10,6 @@ import com.gabrielqt.gtpay.exception.MerchantAndPathAlreadyExists;
 import com.gabrielqt.gtpay.exception.MerchantWithoutBaseUrlException;
 import com.gabrielqt.gtpay.mapper.WebhookSubscriptionMapper;
 import com.gabrielqt.gtpay.repository.WebhookSubscriptionRepository;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,11 +41,9 @@ public class WebhookSubscriptionService {
         return webhookSubscriptionRepository.existsByMerchantIdAndPath(merchantId, path);
     }
 
-    public Page<WebhookSubscriptionResponse> findAll(Pageable pageable, Merchant merchant) {
-        return webhookSubscriptionRepository.findByMerchant(pageable, merchant)
+    public Page<WebhookSubscriptionResponse> findAll(Pageable pageable, User user) {
+        return webhookSubscriptionRepository.findByMerchant(pageable, merchantService.findByUser(user))
                 .map(webhookSubscriptionMapper::toResponse);
     }
-
-
 }
 

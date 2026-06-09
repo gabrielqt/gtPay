@@ -31,11 +31,12 @@ public class WebhookSubscriptionController {
 
     }
 
+    @GetMapping
     public Page<WebhookSubscriptionResponse> findAll(
             Authentication authentication,
             Pageable pageable
     ) {
-        Merchant merchant = (Merchant) authentication.getPrincipal();
-        return webhookSubscriptionService.findAll(pageable, merchant);
+        User user = (User) authentication.getPrincipal();
+        return webhookSubscriptionService.findAll(pageable, user);
     }
 }
