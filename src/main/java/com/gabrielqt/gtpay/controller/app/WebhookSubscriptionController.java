@@ -28,7 +28,6 @@ public class WebhookSubscriptionController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(webhookSubscriptionService.createWebhookSubscription(request, user));
-
     }
 
     @GetMapping

@@ -27,7 +27,6 @@ public class ChargeController {
                                                     ) {
         Merchant merchant = (Merchant) authentication.getPrincipal();
         chargeService.newCharge(chargeRequest, merchant);
-
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
