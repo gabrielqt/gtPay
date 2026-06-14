@@ -38,7 +38,7 @@ public class ChargeService {
                 .build();
 
         if(paymentTypeIsPix(request)) {
-            charge.setBrCode(paymentService.generateBrCode());
+            charge.setBrCode(paymentService.generateBrCode(merchant, charge));
         }
 
         return null;
