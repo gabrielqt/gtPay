@@ -28,5 +28,12 @@ public class Merchant {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String pixKey;
 
+    private String cep;
+
+    private String city;
+
+    @Column(name = "store_name")
+    private String storeName;
 }

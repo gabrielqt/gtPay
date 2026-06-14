@@ -1,7 +1,9 @@
 package com.gabrielqt.gtpay.controller.app;
 
 import com.gabrielqt.gtpay.dto.request.BaseUrlRequest;
+import com.gabrielqt.gtpay.dto.request.MerchantInfoRequest;
 import com.gabrielqt.gtpay.dto.response.BaseUrlResponse;
+import com.gabrielqt.gtpay.dto.response.MerchantInfoResponse;
 import com.gabrielqt.gtpay.dto.response.MerchantResponse;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.service.MerchantService;
@@ -35,6 +37,15 @@ public class MerchantController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(merchantService.updateBaseUrl(requestBaseUrl.baseUrl(), user));
 
+    }
+
+    @PutMapping("/info")
+    public ResponseEntity<MerchantInfoResponse> updateInfo(
+            Authentication authentication,
+            @RequestBody @Valid MerchantInfoRequest request
+    ) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(merchantService.updateInfo(request, user));
     }
 
     @GetMapping("/{id}")

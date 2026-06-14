@@ -1,5 +1,6 @@
 package com.gabrielqt.gtpay.entity;
 
+import com.gabrielqt.gtpay.entity.enums.PaymentType;
 import com.gabrielqt.gtpay.entity.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -24,17 +25,23 @@ public class Charge {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private Status status; // quero setar default para pending
+    private Status status;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
 
     @NotNull
     @Min(value = 0, message = "Amount must be greater than or equal to zero")
     private BigDecimal amount;
 
+    @Column(name = "br_code", columnDefinition = "TEXT")
+    private String brCode;   // gerado se paymentType = PIX
+
     @OneToOne
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    private Long externalId; // charge id on the merchant system
+    private String externalId;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")

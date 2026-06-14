@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ChargeRepository extends JpaRepository<Charge, Long> {
-    Optional<Charge> findByExternalId(Long id);
-    boolean existsByExternalIdAndMerchant(Long id, Merchant merchant);
+    Optional<Charge> findByExternalId(String id);
+    boolean existsByExternalIdAndMerchant(String id, Merchant merchant);
 }

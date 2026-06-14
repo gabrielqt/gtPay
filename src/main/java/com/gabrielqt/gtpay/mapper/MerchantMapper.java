@@ -14,6 +14,10 @@ public class MerchantMapper {
         return new MerchantResponse(
                 merchant.getId(),
                 merchant.getBaseUrl(),
+                merchant.getCep(),
+                merchant.getCity(),
+                merchant.getStoreName(),
+                merchant.getPixKey(),
                 merchant.getUser().getEmail()
                 );
     }

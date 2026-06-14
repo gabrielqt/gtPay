@@ -1,0 +1,1 @@
+ALTER TABLE charge ALTER COLUMN external_id VARCHAR(255);

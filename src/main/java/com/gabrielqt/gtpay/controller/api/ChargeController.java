@@ -22,11 +22,10 @@ public class ChargeController {
     private final ChargeService chargeService;
 
     @PostMapping("new-charge/")
-    public ResponseEntity<Void> newCharge(@RequestBody ChargeRequest chargeRequest,
+    public ResponseEntity<ChargeResponse> newCharge(@RequestBody ChargeRequest chargeRequest,
                                                     Authentication authentication
                                                     ) {
         Merchant merchant = (Merchant) authentication.getPrincipal();
-        chargeService.newCharge(chargeRequest, merchant);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(chargeService.newCharge(chargeRequest, merchant));
     }
 }
