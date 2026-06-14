@@ -10,6 +10,7 @@ import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
 import com.gabrielqt.gtpay.mapper.MerchantMapper;
 import com.gabrielqt.gtpay.repository.MerchantRepository;
+import com.gabrielqt.gtpay.service.helper.CepFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ public class MerchantService{
 
     private final MerchantRepository merchantRepository;
     private final MerchantMapper merchantMapper;
+    private final CepFinder cepFinder;
 
     public void createForUser(User user){
         Merchant merchant = Merchant.builder()
@@ -48,6 +50,7 @@ public class MerchantService{
     public MerchantInfoResponse updateInfo(MerchantInfoRequest request, User user) {
         Merchant merchant = this.findByUser(user);
         merchant.setCep(request.cep());
+        merchant.setCity(cepFinder.findCityByCep(request.cep()));
         merchant.setStoreName(request.storeName());
         merchant.setPixKey(request.pixKey());
         return new MerchantInfoResponse(merchant.getCep(), merchant.getCity(), merchant.getStoreName(), merchant.getPixKey());
