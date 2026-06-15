@@ -9,6 +9,7 @@ import com.gabrielqt.gtpay.entity.enums.PaymentType;
 import com.gabrielqt.gtpay.entity.enums.Status;
 import com.gabrielqt.gtpay.exception.BusinessException;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
+import com.gabrielqt.gtpay.mapper.ChargeMapper;
 import com.gabrielqt.gtpay.repository.ChargeRepository;
 import com.gabrielqt.gtpay.service.helper.DateTimeProvider;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ public class ChargeService {
     private final ChargeRepository chargeRepository;
     private final DateTimeProvider dateTimeProvider;
     private final PaymentService paymentService;
+    private final ChargeMapper chargeMapper;
+
 
     @Transactional
     public ChargeResponse newCharge(ChargeRequest request,
@@ -41,8 +44,8 @@ public class ChargeService {
             charge.setBrCode(paymentService.generateBrCode(merchant, charge));
         }
 
-        return null;
-
+        chargeRepository.save(charge);
+        return chargeMapper.toChargeResponse(charge);
     }
 
     public Charge findChargeByExternalId(String externalId) {
