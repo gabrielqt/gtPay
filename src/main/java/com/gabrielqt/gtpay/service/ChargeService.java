@@ -5,6 +5,7 @@ import com.gabrielqt.gtpay.dto.response.ChargeResponse;
 import com.gabrielqt.gtpay.entity.Charge;
 import com.gabrielqt.gtpay.entity.Merchant;
 import com.gabrielqt.gtpay.entity.PaymentCard;
+import com.gabrielqt.gtpay.entity.enums.PaymentResult;
 import com.gabrielqt.gtpay.entity.enums.PaymentType;
 import com.gabrielqt.gtpay.entity.enums.Status;
 import com.gabrielqt.gtpay.exception.BusinessException;
@@ -64,4 +65,17 @@ public class ChargeService {
         return chargeRequest.paymentType().equals(PaymentType.PIX);
     }
 
+    public Charge findById(Long chargeId) {
+        return chargeRepository.findById(chargeId)
+                .orElseThrow(() -> new ObjectNotFoundException("Charge not found"));
+    }
+
+    public boolean isChargeExpired(Charge charge) {
+        return dateTimeProvider.now().isAfter(charge.getExpiresAt());
+    }
+
+    public boolean isChargePending(Charge charge) {
+        return charge.getStatus().equals(Status.PENDING);
+    }
 }
+

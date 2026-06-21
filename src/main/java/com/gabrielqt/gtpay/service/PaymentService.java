@@ -1,17 +1,30 @@
 package com.gabrielqt.gtpay.service;
 
+import com.gabrielqt.gtpay.dto.request.SimulatePaymentRequest;
 import com.gabrielqt.gtpay.entity.Charge;
 import com.gabrielqt.gtpay.entity.Merchant;
+import com.gabrielqt.gtpay.entity.Payment;
+import com.gabrielqt.gtpay.entity.PaymentCard;
+import com.gabrielqt.gtpay.entity.enums.PaymentResult;
+import com.gabrielqt.gtpay.entity.enums.Status;
+import com.gabrielqt.gtpay.exception.BusinessException;
+import com.gabrielqt.gtpay.repository.PaymentRepository;
+import com.gabrielqt.gtpay.service.helper.DateTimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+    private final ChargeService chargeService;
+    private final PaymentRepository paymentRepository;
+
     private final String PAYLOAD_FORMAT = "01";
     private final String MERCHANT_CATEGORY = "0000";
     private final String CURRENCY_CODE = "986"; // moeda
@@ -83,6 +96,45 @@ public class PaymentService {
         return clean.length() > maxLength
                 ? clean.substring(0, maxLength)
                 : clean;
+    }
+
+    @Transactional
+    public void receivePaymentFromPsp(SimulatePaymentRequest request) {
+        Charge charge = chargeService.findById(request.chargeId());
+        if(chargeService.isChargeExpired(charge)){
+            charge.setStatus(Status.EXPIRED);
+            return;
+            // dispara webhook acho
+        }
+
+        if(!chargeService.isChargePending(charge)) {throw new BusinessException("Just charges with status PENDING can be paid.");}
+
+        charge.setStatus(request.result().equals(PaymentResult.APPROVED) ? Status.PAID : Status.FAILED);
+        if(request.result().equals(PaymentResult.APPROVED)){Payment payment = buildPayment(charge, request); charge.setPayment(payment);}
+        sendWebhook(charge);
+    }
+
+    private Payment buildPayment(Charge charge, SimulatePaymentRequest request) {
+        return switch (charge.getPaymentType()) {
+            case PIX -> Payment.builder()
+                    .amount(charge.getAmount())
+                    .createdAt(LocalDateTime.now())
+                    .charge(charge)
+                    .build();
+
+            case CARD -> PaymentCard.builder()
+                    .amount(charge.getAmount())
+                    .createdAt(LocalDateTime.now())
+                    .charge(charge)
+                    .lastDigits(request.cardLastDigits())
+                    .cardBrand(request.cardBrand())
+                    .holderName(request.cardHolder())
+                    .build();
+        };
+    }
+
+    public void sendWebhook(Charge charge){
+        // aqui validar status pra saber pra qual webhook enviar (paid, failed)
     }
 }
 
