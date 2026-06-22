@@ -4,8 +4,6 @@ import com.gabrielqt.gtpay.dto.request.ChargeRequest;
 import com.gabrielqt.gtpay.dto.response.ChargeResponse;
 import com.gabrielqt.gtpay.entity.Charge;
 import com.gabrielqt.gtpay.entity.Merchant;
-import com.gabrielqt.gtpay.entity.PaymentCard;
-import com.gabrielqt.gtpay.entity.enums.PaymentResult;
 import com.gabrielqt.gtpay.entity.enums.PaymentType;
 import com.gabrielqt.gtpay.entity.enums.Status;
 import com.gabrielqt.gtpay.exception.BusinessException;
@@ -22,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChargeService {
     private final ChargeRepository chargeRepository;
     private final DateTimeProvider dateTimeProvider;
-    private final PaymentService paymentService;
+    private final BrCodeService brCodeService;
     private final ChargeMapper chargeMapper;
 
 
@@ -42,7 +40,7 @@ public class ChargeService {
                 .build();
 
         if(paymentTypeIsPix(request)) {
-            charge.setBrCode(paymentService.generateBrCode(merchant, charge));
+            charge.setBrCode(brCodeService.generateBrCode(merchant, charge));
         }
 
         chargeRepository.save(charge);
