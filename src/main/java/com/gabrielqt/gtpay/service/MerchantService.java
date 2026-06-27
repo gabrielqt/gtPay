@@ -41,9 +41,14 @@ public class MerchantService{
     }
 
     public MerchantResponse findById(Long merchantId){
-        Merchant merchant =  merchantRepository.findById(merchantId)
+        return merchantMapper.toMerchantResponse(
+                findMerchantById(merchantId)
+        );
+    }
+
+    public Merchant findMerchantById(Long merchantId){
+        return merchantRepository.findById(merchantId)
                 .orElseThrow(() -> new  ObjectNotFoundException("Merchant not Found"));
-        return merchantMapper.toMerchantResponse(merchant);
     }
 
     @Transactional
