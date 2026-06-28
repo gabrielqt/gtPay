@@ -74,7 +74,7 @@ public class WebhookSubscriptionService {
                         ).toList();
     }
 
-    private EventType statusToEventType(Status status) {
+    protected EventType statusToEventType(Status status) {
         return switch(status){
             case FAILED -> EventType.CHARGE_FAILED;
             case PAID -> EventType.CHARGE_PAID;

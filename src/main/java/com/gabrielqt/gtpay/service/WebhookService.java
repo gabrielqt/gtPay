@@ -1,15 +1,20 @@
 package com.gabrielqt.gtpay.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabrielqt.gtpay.config.RabbitMQConfig;
 import com.gabrielqt.gtpay.dto.message.MessageCharge;
-import com.gabrielqt.gtpay.entity.Charge;
+import com.gabrielqt.gtpay.dto.request.WebhookPayload;
 import com.gabrielqt.gtpay.entity.Merchant;
 import com.gabrielqt.gtpay.entity.WebhookEvent;
 import com.gabrielqt.gtpay.entity.WebhookSubscription;
+import com.gabrielqt.gtpay.mapper.WebhookPayloadMapper;
+import com.gabrielqt.gtpay.security.SecretService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -21,13 +26,30 @@ public class WebhookService {
     private final MerchantService merchantService;
     private final WebhookSubscriptionService webhookSubscriptionService;
     private final WebhookEventService webhookEventService;
+    private final WebhookPayloadMapper payloadMapper;
+    private final ObjectMapper objectMapper;
+    private final SecretService secretService;
+    private final ChargeService chargeService;
 
     @RabbitListener(queues = RabbitMQConfig.WEBHOOK_QUEUE)
-    public void onPaymentConfirmed(MessageCharge message) {
+    public void onPaymentConfirmed(MessageCharge message) throws JsonProcessingException {
         Merchant merchant = merchantService.findMerchantById(message.merchantId());
         List<WebhookSubscription> subscriptions = webhookSubscriptionService.findCompatibleWebhookSubscriptionByStatus(merchant, message.status());
+
         for (WebhookSubscription subscription : subscriptions) {
-            dispatchWebhook(subscription);
+            WebhookPayload wp = payloadMapper.messageToWebhookPayload(message);
+            String payload = objectMapper.writeValueAsString(wp);
+            String signature = secretService.sign(payload, secretService.decryptSecret(subscription.getSecretEncrypted()));
+
+            WebhookEvent event = WebhookEvent.builder()
+                            .type(webhookSubscriptionService.statusToEventType(message.status()))
+                             .payload(payload)
+                             .subscription(subscription)
+                             .delivered(false)
+                             .charge(chargeService.findById(message.chargeId()))
+                             .build();
+
+            dispatchWebhook(payload, signature, subscription.getUrl(), event);
         }
 
     }
@@ -37,9 +59,16 @@ public class WebhookService {
         List<WebhookEvent> events = webhookEventService.findUndelivered();
     }
 
-    private void dispatchWebhook(WebhookSubscription subscription) {
-
+    @Transactional
+    private void dispatchWebhook(String payload, String signature, String url, WebhookEvent event) {
+        restClient.post()
+                .uri(url)
+                .header("X-Signature", signature)
+                .body(payload)
+                .retrieve()
+                .toBodilessEntity();
     }
+
 
 }
 
