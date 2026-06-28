@@ -13,6 +13,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
+
 @Service
 public class SecretService {
 
@@ -134,6 +141,24 @@ public class SecretService {
                     "Error decrypting secret",
                     ex
             );
+        }
+    }
+
+    public String sign(String payload, String secret) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+
+            SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"
+            );
+
+            mac.init(keySpec);
+
+            byte[] hmacBytes = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+
+            return HexFormat.of().formatHex(hmacBytes);
+
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException("Error signing payload", e);
         }
     }
 }

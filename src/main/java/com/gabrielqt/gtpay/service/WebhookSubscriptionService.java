@@ -6,6 +6,9 @@ import com.gabrielqt.gtpay.dto.response.WebhookSubscriptionResponse;
 import com.gabrielqt.gtpay.entity.Merchant;
 import com.gabrielqt.gtpay.entity.User;
 import com.gabrielqt.gtpay.entity.WebhookSubscription;
+import com.gabrielqt.gtpay.entity.enums.EventType;
+import com.gabrielqt.gtpay.entity.enums.Status;
+import com.gabrielqt.gtpay.exception.BusinessException;
 import com.gabrielqt.gtpay.exception.MerchantAndPathAlreadyExists;
 import com.gabrielqt.gtpay.exception.MerchantWithoutBaseUrlException;
 import com.gabrielqt.gtpay.exception.ObjectNotFoundException;
@@ -16,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.gabrielqt.gtpay.security.SecretService;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +62,26 @@ public class WebhookSubscriptionService {
         return webhookSubscriptionRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Webhook subscription with id " + id + " not found"));
     }
+
+    public List<WebhookSubscription> findCompatibleWebhookSubscriptionByStatus(Merchant merchant, Status status) {
+        List<WebhookSubscription> subscriptions =  webhookSubscriptionRepository.findByMerchant(merchant);
+
+        EventType event = statusToEventType(status);
+
+        return
+                subscriptions.stream().filter(
+                        wh -> wh.getEvent() == event || wh.getEvent() == EventType.ALL
+                        ).toList();
+    }
+
+    private EventType statusToEventType(Status status) {
+        return switch(status){
+            case FAILED -> EventType.CHARGE_FAILED;
+            case PAID -> EventType.CHARGE_PAID;
+            case EXPIRED -> EventType.CHARGE_EXPIRED;
+            default -> null;
+        };
+    }
+
 }
 
