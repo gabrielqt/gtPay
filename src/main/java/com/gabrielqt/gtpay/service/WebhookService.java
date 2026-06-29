@@ -12,11 +12,13 @@ import com.gabrielqt.gtpay.mapper.WebhookPayloadMapper;
 import com.gabrielqt.gtpay.security.SecretService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -38,18 +40,17 @@ public class WebhookService {
 
         for (WebhookSubscription subscription : subscriptions) {
             WebhookPayload wp = payloadMapper.messageToWebhookPayload(message);
-            String payload = objectMapper.writeValueAsString(wp);
-            String signature = secretService.sign(payload, secretService.decryptSecret(subscription.getSecretEncrypted()));
 
             WebhookEvent event = WebhookEvent.builder()
                             .type(webhookSubscriptionService.statusToEventType(message.status()))
-                             .payload(payload)
                              .subscription(subscription)
+                             .attempts(0)
                              .delivered(false)
+                             .payload(objectMapper.writeValueAsString(wp))
                              .charge(chargeService.findById(message.chargeId()))
                              .build();
 
-            dispatchWebhook(payload, signature, subscription.getUrl(), event);
+            dispatchWebhook(event);
         }
 
     }
@@ -57,19 +58,37 @@ public class WebhookService {
     @Scheduled(fixedRate = 60000)
     public void retryFailedWebhooks(){
         List<WebhookEvent> events = webhookEventService.findUndelivered();
+        for (WebhookEvent event : events) {
+            dispatchWebhook(event);
+        }
     }
 
-    @Transactional
-    private void dispatchWebhook(String payload, String signature, String url, WebhookEvent event) {
-        restClient.post()
-                .uri(url)
-                .header("X-Signature", signature)
-                .body(payload)
-                .retrieve()
-                .toBodilessEntity();
+    private void dispatchWebhook(WebhookEvent event) {
+        try {
+            WebhookSubscription subscription = event.getSubscription();
+            String signature = secretService.sign(event.getPayload(), secretService.decryptSecret(subscription.getSecretEncrypted()));
+
+            ResponseEntity<Void> response = restClient.post()
+                    .uri(subscription.getUrl())
+                    .header("X-Signature", signature)
+                    .body(event.getPayload())
+                    .retrieve()
+                    .toBodilessEntity();
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                event.setDelivered(true);
+            }
+        }
+        catch (Exception e) {
+//            loggar
+        }
+        finally {
+            event.setAttempts(event.getAttempts() + 1);
+            event.setLastAttemptAt(LocalDateTime.now());
+            webhookEventService.save(event);
+        }
+
     }
-
-
 }
 
 

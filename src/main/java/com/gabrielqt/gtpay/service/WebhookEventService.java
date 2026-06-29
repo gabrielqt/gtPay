@@ -17,7 +17,7 @@ public class WebhookEventService {
     private final WebhookSubscriptionService webhookSubscriptionService;
 
     public List<WebhookEvent> findUndelivered() {
-        return webhookEventRepository.findByDeliveredFalseAndAttemptsLessThan(10);
+        return webhookEventRepository.findByDeliveredFalseAndAttemptsLessThan(10); // max 10 attempts
     }
 
     public WebhookEvent save(WebhookEvent webhookEvent) {
