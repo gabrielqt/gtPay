@@ -11,6 +11,7 @@ import com.gabrielqt.gtpay.entity.WebhookSubscription;
 import com.gabrielqt.gtpay.mapper.WebhookPayloadMapper;
 import com.gabrielqt.gtpay.security.SecretService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +22,7 @@ import org.springframework.web.client.RestClient;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WebhookService {
@@ -35,8 +37,12 @@ public class WebhookService {
 
     @RabbitListener(queues = RabbitMQConfig.WEBHOOK_QUEUE)
     public void onPaymentConfirmed(MessageCharge message) throws JsonProcessingException {
+        log.info("Received payment confirmation for charge {}", message.chargeId());
         Merchant merchant = merchantService.findMerchantById(message.merchantId());
         List<WebhookSubscription> subscriptions = webhookSubscriptionService.findCompatibleWebhookSubscriptionByStatus(merchant, message.status());
+        if (subscriptions.isEmpty()){
+            log.info("No webhook subscriptions for merchant {}", message.merchantId());
+        }
 
         for (WebhookSubscription subscription : subscriptions) {
             WebhookPayload wp = payloadMapper.messageToWebhookPayload(message);
@@ -58,6 +64,7 @@ public class WebhookService {
     @Scheduled(fixedRate = 60000)
     public void retryFailedWebhooks(){
         List<WebhookEvent> events = webhookEventService.findUndelivered();
+        log.info("Retrying failed webhooks for {} events", events.size());
         for (WebhookEvent event : events) {
             dispatchWebhook(event);
         }
@@ -77,10 +84,12 @@ public class WebhookService {
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 event.setDelivered(true);
+                log.info("Webhook delivered to {} for charge {}", subscription.getUrl(), event.getCharge().getId());
             }
         }
         catch (Exception e) {
-//            loggar
+            log.warn("Webhook delivery failed to {} (attempt {}): {}",
+                    event.getSubscription().getUrl(), event.getAttempts() + 1, e.getMessage());
         }
         finally {
             event.setAttempts(event.getAttempts() + 1);
@@ -91,22 +100,3 @@ public class WebhookService {
     }
 }
 
-
-// um webhook event pra cada webhooksubscription
-
-// carregar a lista de webhook events pra saber se é um retry ou não
-
-// 1. busca a subscription do merchant pro evento
-// 2. monta o payload JSON
-// 3. calcula a assinatura HMAC
-// 4. faz o POST (try-catch)
-// 5. registra o WebhookEvent (delivered conforme resultado)
-//
-
-
-//restClient.post()
-//    .uri(...)           // a URL do merchant
-//    .header(...)        // aqui vai a assinatura HMAC
-//    .body(...)          // o payload
-//    .retrieve()
-//    .toBodilessEntity() // ou toEntity se quiser a resposta
