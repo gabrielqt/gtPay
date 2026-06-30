@@ -68,6 +68,7 @@ public class PaymentService {
     private void sendMessage(Charge charge){
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.CHARGE_EXCHANGE,
+                "",
                 new MessageCharge(
                         charge.getId(),
                         charge.getExternalId(),

@@ -13,7 +13,7 @@ public class WebhookPayloadMapper {
         return new WebhookPayload(
                 msg.externalId(),
                 msg.status(),
-                msg.confirmedAt()
+                msg.confirmedAt() != null ? msg.confirmedAt().toString() : null
         );
     }
 }
