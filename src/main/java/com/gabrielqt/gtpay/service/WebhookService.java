@@ -37,9 +37,12 @@ public class WebhookService {
 
     @RabbitListener(queues = RabbitMQConfig.WEBHOOK_QUEUE)
     public void onPaymentConfirmed(MessageCharge message) throws JsonProcessingException {
+
         log.info("Received payment confirmation for charge {}", message.chargeId());
         Merchant merchant = merchantService.findMerchantById(message.merchantId());
+
         List<WebhookSubscription> subscriptions = webhookSubscriptionService.findCompatibleWebhookSubscriptionByStatus(merchant, message.status());
+
         if (subscriptions.isEmpty()){
             log.info("No webhook subscriptions for merchant {}", message.merchantId());
         }
